@@ -1,0 +1,38 @@
+# Visual Studio / Rider (regenerated via "Generate Visual Studio project files")
+.vs/
+.vsconfig
+*.sln
+*.slnx
+*.sln.docstates
+*.opensdf
+*.sdf
+*.suo
+*.VC.db
+*.VC.opendb
+.idea/
+
+# Unreal Engine generated
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Unreal Engine plugin generated
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# Compiled source
+*.pdb
+*.obj
+
+# Precompiled Assets
+SourceArt/**/*.png
+SourceArt/**/*.tga
+
+# Rider
+*.sln.iml
+
+# Generated project files
+*.xcodeproj
+*.xcworkspace
