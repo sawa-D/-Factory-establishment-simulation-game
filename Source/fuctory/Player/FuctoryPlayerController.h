@@ -6,6 +6,9 @@
 #include "FuctoryPlayerController.generated.h"
 
 class UChoiceData;
+class UInputMappingContext;
+class UInputAction;
+struct FInputActionValue;
 
 UCLASS()
 class FUCTORY_API AFuctoryPlayerController : public APlayerController
@@ -15,6 +18,17 @@ class FUCTORY_API AFuctoryPlayerController : public APlayerController
 public:
     AFuctoryPlayerController();
     virtual void BeginPlay() override;
+    virtual void SetupInputComponent() override;
+
+    // Enhanced Input: テスト用にフェーズ進行と選択肢提示をキー入力から呼べるようにする
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputMappingContext> DefaultMappingContext;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputAction> IA_PresentChoice;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+    TObjectPtr<UInputAction> IA_CompletePhase;
 
     // ChoiceSubsystem からの通知を受けて BP の UI を呼び出す
     UFUNCTION(BlueprintCallable, Category = "UI")
@@ -57,4 +71,7 @@ private:
 
     UFUNCTION()
     void OnGameClear();
+
+    void OnInputPresentChoice(const FInputActionValue& Value);
+    void OnInputCompletePhase(const FInputActionValue& Value);
 };
