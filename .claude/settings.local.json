@@ -6,7 +6,9 @@
       "Bash(git commit *)",
       "Bash(grep -a -o -E \"[ -~]{4,}\" \"Content/UI/WBP_ChoiceDialog.uasset\")",
       "Bash(grep -a -o -E \"[ -~]{4,}\" \"Content/Core/BP_FuctoryPlayerController.uasset\")",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep -a -o -E \"[ -~]{4,}\" Content/Data/Choices/DA_Choice_Contractor.uasset)",
+      "Bash(grep -viE \"^\\(Default__|/Script|/Game|BlueprintGeneratedClass|Engine\\\\.|CoreUObject|None$|Class$|Package$\\)\")"
     ]
   }
 }
