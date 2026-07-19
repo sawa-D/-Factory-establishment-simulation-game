@@ -8,7 +8,8 @@
       "Bash(grep -a -o -E \"[ -~]{4,}\" \"Content/Core/BP_FuctoryPlayerController.uasset\")",
       "Bash(git push *)",
       "Bash(grep -a -o -E \"[ -~]{4,}\" Content/Data/Choices/DA_Choice_Contractor.uasset)",
-      "Bash(grep -viE \"^\\(Default__|/Script|/Game|BlueprintGeneratedClass|Engine\\\\.|CoreUObject|None$|Class$|Package$\\)\")"
+      "Bash(grep -viE \"^\\(Default__|/Script|/Game|BlueprintGeneratedClass|Engine\\\\.|CoreUObject|None$|Class$|Package$\\)\")",
+      "Bash(\"/c/Program Files/Epic Games/UE_5.8/Engine/Build/BatchFiles/Build.bat\" fuctoryEditor Win64 Development -project=\"C:/Users/keisy/Documents/Unreal Projects/fuctory/fuctory.uproject\" -waitmutex)"
     ]
   }
 }

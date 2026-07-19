@@ -37,6 +37,10 @@ public:
     UFUNCTION(BlueprintPure, Category = "Choice")
     bool IsChoiceCompleted(UChoiceData* Choice) const;
 
+    // 選択結果の説明用に、FChoiceOptionの非ゼロの変化のみをテキスト化する(UI用)
+    UFUNCTION(BlueprintPure, Category = "Choice")
+    static FText GetOptionChangeSummary(const FChoiceOption& Option);
+
     // フェーズ切り替え時に完了履歴をリセット
     UFUNCTION(BlueprintCallable, Category = "Choice")
     void ResetForPhase();

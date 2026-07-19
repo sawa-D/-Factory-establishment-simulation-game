@@ -19,16 +19,63 @@ void UChoiceSubsystem::SelectOption(UChoiceData* Choice, int32 OptionIndex)
 
     const FChoiceOption& Option = Choice->Options[OptionIndex];
 
+    // 完了済みとして先にマークする(PhaseSubsystem側の「選択肢を使い切ったか」判定が
+    // 今回選んだ選択肢を除外して正しく評価できるようにするため)
+    CompletedChoiceNames.Add(Choice->GetFName());
+
     // PhaseSubsystem にステータス変化を適用
     if (UPhaseSubsystem* PhaseSys = GetGameInstance()->GetSubsystem<UPhaseSubsystem>())
     {
         PhaseSys->ApplyChoiceOption(Option);
     }
 
-    // 完了済みとしてマーク
-    CompletedChoiceNames.Add(Choice->GetFName());
-
     OnOptionSelected.Broadcast(Choice, OptionIndex);
+}
+
+FText UChoiceSubsystem::GetOptionChangeSummary(const FChoiceOption& Option)
+{
+    TArray<FString> Lines;
+
+    if (Option.MoneyCost != 0.f)
+    {
+        Lines.Add(FString::Printf(TEXT("資金: -%s円"), *FText::AsNumber(Option.MoneyCost).ToString()));
+    }
+    if (Option.DaysUsed != 0)
+    {
+        Lines.Add(FString::Printf(TEXT("残り日数: -%d日"), Option.DaysUsed));
+    }
+
+    auto AddDelta = [&Lines](const TCHAR* Label, float Delta)
+    {
+        if (Delta != 0.f)
+        {
+            Lines.Add(FString::Printf(TEXT("%s: %s%.0f"), Label, Delta > 0.f ? TEXT("+") : TEXT(""), Delta));
+        }
+    };
+
+    AddDelta(TEXT("建屋品質"), Option.BuildingQualityDelta);
+    AddDelta(TEXT("設備品質"), Option.EquipmentQualityDelta);
+    AddDelta(TEXT("資材品質"), Option.MaterialQualityDelta);
+    AddDelta(TEXT("資材在庫"), Option.MaterialStockDelta);
+    AddDelta(TEXT("作業員技術力"), Option.WorkerSkillDelta);
+
+    if (Option.WorkerCountDelta != 0)
+    {
+        Lines.Add(FString::Printf(TEXT("作業員数: %s%d"), Option.WorkerCountDelta > 0 ? TEXT("+") : TEXT(""), Option.WorkerCountDelta));
+    }
+
+    AddDelta(TEXT("生産効率"), Option.ProductionEfficiencyDelta);
+    AddDelta(TEXT("製品品質"), Option.ProductQualityDelta);
+    AddDelta(TEXT("顧客満足度"), Option.CustomerSatisfactionDelta);
+    AddDelta(TEXT("信用評価"), Option.ReputationDelta);
+    AddDelta(TEXT("システム導入進捗"), Option.SystemProgressDelta);
+
+    if (Option.bOverrideMaterialQuality)
+    {
+        Lines.Add(FString::Printf(TEXT("資材品質: %.0fに設定"), Option.MaterialQualityOverride));
+    }
+
+    return FText::FromString(FString::Join(Lines, TEXT("\n")));
 }
 
 TArray<UChoiceData*> UChoiceSubsystem::GetPendingChoices(EGamePhase Phase, const TArray<UChoiceData*>& AllChoices) const

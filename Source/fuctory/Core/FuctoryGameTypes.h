@@ -69,6 +69,9 @@ struct FFactoryStats
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
     int32 DaysUsed = 0;                 // フェーズ内経過日数
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Production")
+    float SystemProgress = 0.f;         // 生産管理システム導入進捗 0-100(建設期に開始、立ち上げ期のDayLimitまでに100必須)
 };
 
 // 選択肢の1オプション
@@ -123,6 +126,9 @@ struct FChoiceOption
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
     float ReputationDelta = 0.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+    float SystemProgressDelta = 0.f;
 
     // 資材品質・数量を直接設定する選択肢（調達系）
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")

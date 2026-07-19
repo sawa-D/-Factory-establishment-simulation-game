@@ -10,10 +10,10 @@
 
 | 項目 | ファイル | 状態 |
 |---|---|---|
-| ゲーム型定義(Enum/Struct) | `Core/FuctoryGameTypes.h` | ✅ 完了 |
+| ゲーム型定義(Enum/Struct) | `Core/FuctoryGameTypes.h` | ✅ 完了(`SystemProgress`/`SystemProgressDelta`追加済み) |
 | EconomySubsystem(資金管理) | `Economy/EconomySubsystem.*` | ✅ 完了 |
-| PhaseSubsystem(フェーズ進行・隠れ条件・目標判定) | `Phase/PhaseSubsystem.*` | ✅ 完了 |
-| ChoiceSubsystem(選択肢提示・選択・完了管理) | `Choice/ChoiceSubsystem.*` | ✅ 完了 |
+| PhaseSubsystem(フェーズ進行・隠れ条件・目標判定) | `Phase/PhaseSubsystem.*` | ✅ 完了(DayLimit到達時のObjectives分岐、選択肢枯渇時の判定を追加済み・フルビルド確認済み) |
+| ChoiceSubsystem(選択肢提示・選択・完了管理) | `Choice/ChoiceSubsystem.*` | ✅ 完了(`GetOptionChangeSummary`ヘルパー追加済み、完了マークのタイミングを修正) |
 | FuctoryGameMode(サブシステム初期化・スポーン設定) | `Core/FuctoryGameMode.*` | ✅ 完了 |
 | FuctoryPlayerController(入力・UIフック) | `Player/FuctoryPlayerController.*` | ✅ 完了 |
 | IsometricPawn(カメラ/移動) | `Player/IsometricPawn.*` | ⚠️ 実装済みだが動作未検証 |
@@ -94,12 +94,8 @@
 2. ~~**選択後の後処理**~~ → ✅ 完了(2026-07-19)
 3. ~~**フェーズ切り替え・ゲームオーバー/クリアのUI実装**~~ → ✅ 完了(2026-07-19)
 4. ~~**GamePlot.mdの未確定事項を詰める**(数値基準・選択肢バリエーション・UI/UX方針・世界観・リプレイ性)~~ → ✅ 完了(2026-07-19。`GamePlot.md` 全面改訂)
-5. **C++側の追加実装**(`GamePlot.md` 参照) ← 次はここから
-   - `FFactoryStats::SystemProgress` フィールド追加
-   - `PhaseSubsystem::CheckHiddenConditions` のDayLimit判定ロジック改修(日数超過時にObjectives判定→分岐、選択肢を使い切った際の判定追加)
-   - `FChoiceOption` から非ゼロの変化のみをテキスト化するヘルパー関数(結果パネル用)
-   - ※いずれもヘッダー変更を伴うため、Live Codingではなく通常のフルリコンパイルで反映すること
-6. **データアセットの作成・調整**(`GamePlot.md` 6章の数値を反映)
+5. ~~**C++側の追加実装**~~ → ✅ 完了(2026-07-19。`SystemProgress`/`SystemProgressDelta`追加、`CheckHiddenConditions`のDayLimit判定ロジック改修、`GetOptionChangeSummary`ヘルパー追加。フルリコンパイルで動作確認済み)
+6. **データアセットの作成・調整**(`GamePlot.md` 6章の数値を反映) ← 次はここから
    - `DA_Choice_Contractor` の数値調整
    - 建設期の残り選択肢(安全対策・保険/建設資材調達/システム導入①)、`DA_Phase_Setup`とその選択肢4個、`DA_Phase_MassProduction`とその選択肢3個を新規作成
 7. **HUD(`WBP_HUD`)の実装**(残り日数・資金・主要ステータスのリアルタイム表示)

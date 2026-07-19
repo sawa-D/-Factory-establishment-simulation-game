@@ -1,6 +1,8 @@
 #include "PhaseSubsystem.h"
 #include "PhaseData.h"
 #include "Economy/EconomySubsystem.h"
+#include "Choice/ChoiceSubsystem.h"
+#include "Choice/ChoiceData.h"
 
 void UPhaseSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -67,6 +69,7 @@ void UPhaseSubsystem::ApplyChoiceOption(const FChoiceOption& Option)
     Stats.ProductQuality        = FMath::Clamp(Stats.ProductQuality        + Option.ProductQualityDelta,        0.f, 100.f);
     Stats.CustomerSatisfaction  = FMath::Clamp(Stats.CustomerSatisfaction  + Option.CustomerSatisfactionDelta,  0.f, 100.f);
     Stats.Reputation            = FMath::Clamp(Stats.Reputation            + Option.ReputationDelta,            0.f, 100.f);
+    Stats.SystemProgress        = FMath::Clamp(Stats.SystemProgress        + Option.SystemProgressDelta,        0.f, 100.f);
     Stats.DaysUsed             += Option.DaysUsed;
 
     if (Option.bOverrideMaterialQuality)
@@ -85,19 +88,7 @@ void UPhaseSubsystem::CheckHiddenConditions()
     UPhaseData* PhaseData = GetCurrentPhaseData();
     if (!PhaseData) return;
 
-    // 期限チェック
-    if (Stats.DaysUsed > PhaseData->DayLimit)
-    {
-        OnGameOver.Broadcast(
-            EGameOverReason::TimeOver,
-            FText::Format(FText::FromString(TEXT("{0} の期限({1}日)を超過しました。")),
-                PhaseData->PhaseName, FText::AsNumber(PhaseData->DayLimit)));
-        CurrentPhase = EGamePhase::GameOver;
-        bGameEnded = true;
-        return;
-    }
-
-    // 隠れ条件チェック
+    // 隠れ条件チェック(即時ゲームオーバーとなるもの)
     for (const FHiddenCondition& Cond : PhaseData->HiddenConditions)
     {
         if (!EvaluateCondition(Cond))
@@ -106,6 +97,41 @@ void UPhaseSubsystem::CheckHiddenConditions()
             CurrentPhase = EGamePhase::GameOver;
             bGameEnded = true;
             return;
+        }
+    }
+
+    // 期限チェック: 日数超過時はObjectives達成状況で分岐(達成していれば次フェーズへ)
+    if (Stats.DaysUsed > PhaseData->DayLimit)
+    {
+        if (AreObjectivesMet())
+        {
+            TryAdvancePhase();
+        }
+        else
+        {
+            OnGameOver.Broadcast(
+                EGameOverReason::TimeOver,
+                FText::Format(FText::FromString(TEXT("{0} の期限({1}日)までに目標を達成できませんでした。")),
+                    PhaseData->PhaseName, FText::AsNumber(PhaseData->DayLimit)));
+            CurrentPhase = EGamePhase::GameOver;
+            bGameEnded = true;
+        }
+        return;
+    }
+
+    // 選択肢を使い切った場合: 目標未達なら手詰まりとしてゲームオーバー
+    if (UChoiceSubsystem* ChoiceSys = GetGameInstance()->GetSubsystem<UChoiceSubsystem>())
+    {
+        TArray<UChoiceData*> RawChoices;
+        for (UChoiceData* C : PhaseData->AvailableChoices) RawChoices.Add(C);
+
+        if (ChoiceSys->GetPendingChoices(CurrentPhase, RawChoices).Num() == 0 && !AreObjectivesMet())
+        {
+            OnGameOver.Broadcast(
+                EGameOverReason::TimeOver,
+                FText::FromString(TEXT("選択肢をすべて使い切りましたが、目標を達成できませんでした。")));
+            CurrentPhase = EGamePhase::GameOver;
+            bGameEnded = true;
         }
     }
 }
@@ -196,6 +222,7 @@ float UPhaseSubsystem::GetStatValue(const FName& StatName) const
     if (StatName == "CustomerSatisfaction") return Stats.CustomerSatisfaction;
     if (StatName == "Reputation")           return Stats.Reputation;
     if (StatName == "DaysUsed")             return (float)Stats.DaysUsed;
+    if (StatName == "SystemProgress")       return Stats.SystemProgress;
     return 0.f;
 }
 
