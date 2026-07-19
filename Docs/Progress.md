@@ -22,12 +22,13 @@
 
 | 項目 | 必要数 | 現状 | 状態 |
 |---|---|---|---|
-| PhaseData(建設期) | `DA_Phase_Construction` | 作成済み(数値は`GamePlot.md`6章に未反映) | ⚠️ 数値の再調整必要 |
-| PhaseData(立ち上げ期) | `DA_Phase_Setup` | 未作成 | ❌ 未着手 |
-| PhaseData(量産期) | `DA_Phase_MassProduction` | 未作成 | ❌ 未着手 |
-| ChoiceData(施工業者選定) | `DA_Choice_Contractor` | 作成済み・表示確認済みだが数値は`GamePlot.md`6章の値に未調整 | ⚠️ 数値の再調整必要 |
-| ChoiceData(その他の意思決定、計8個) | 各フェーズ3〜4個 | 未作成 | ❌ 未着手(内容は`GamePlot.md`6章で確定済み) |
-| 各Objectives / HiddenConditionsの数値設計 | 全フェーズ分 | 確定済み | ✅ 完了(`GamePlot.md`6〜7章) |
+| PhaseData(建設期) | `DA_Phase_Construction` | `GamePlot.md`6章の数値に調整済み(DayLimit70/CompletionRevenue3000万/Objectives/HiddenConditions/AvailableChoices) | ✅ 完了 |
+| PhaseData(立ち上げ期) | `DA_Phase_Setup` | 新規作成済み | ✅ 完了 |
+| PhaseData(量産期) | `DA_Phase_MassProduction` | 新規作成済み | ✅ 完了 |
+| ChoiceData(施工業者選定) | `DA_Choice_Contractor` | 数値調整済み | ✅ 完了 |
+| ChoiceData(その他の意思決定、計9個) | `DA_Choice_Safety`/`Materials`/`SystemDev_Construction`/`Equipment`/`Hiring`/`LineDesign`/`SystemDev_Setup`/`Materials_MP`/`Pace`/`Sales` | 全て新規作成済み | ✅ 完了 |
+| 各Objectives / HiddenConditionsの数値設計 | 全フェーズ分 | 確定・反映済み | ✅ 完了(`GamePlot.md`6〜7章) |
+| `BP_FuctoryGameMode` の `PhaseDataAssets` 登録 | Construction→Setup→MassProductionの順 | 登録済み | ✅ 完了 |
 
 ## 3. UI
 
@@ -95,10 +96,8 @@
 3. ~~**フェーズ切り替え・ゲームオーバー/クリアのUI実装**~~ → ✅ 完了(2026-07-19)
 4. ~~**GamePlot.mdの未確定事項を詰める**(数値基準・選択肢バリエーション・UI/UX方針・世界観・リプレイ性)~~ → ✅ 完了(2026-07-19。`GamePlot.md` 全面改訂)
 5. ~~**C++側の追加実装**~~ → ✅ 完了(2026-07-19。`SystemProgress`/`SystemProgressDelta`追加、`CheckHiddenConditions`のDayLimit判定ロジック改修、`GetOptionChangeSummary`ヘルパー追加。フルリコンパイルで動作確認済み)
-6. **データアセットの作成・調整**(`GamePlot.md` 6章の数値を反映) ← 次はここから
-   - `DA_Choice_Contractor` の数値調整
-   - 建設期の残り選択肢(安全対策・保険/建設資材調達/システム導入①)、`DA_Phase_Setup`とその選択肢4個、`DA_Phase_MassProduction`とその選択肢3個を新規作成
-7. **HUD(`WBP_HUD`)の実装**(残り日数・資金・主要ステータスのリアルタイム表示)
+6. ~~**データアセットの作成・調整**~~ → ✅ 完了(2026-07-19。全フェーズのPhaseData/ChoiceData作成、`BP_FuctoryGameMode`への登録まで完了)
+7. **HUD(`WBP_HUD`)の実装**(残り日数・資金・主要ステータスのリアルタイム表示) ← 次はここから
 8. **選択後の結果確認パネルの実装**(`WBP_ChoiceDialog`改修。ResultText+変化項目の自動列挙→OKボタンで閉じる)
 9. **ランダム変動システムの実装**(`FRandomStream`によるプレイスルー単位の±10%変動)
 
