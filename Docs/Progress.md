@@ -4,7 +4,7 @@
 > 設計・仕様の詳細は [`GamePlot.md`](./GamePlot.md) を参照してください。
 > 作業を進めるたびに、このファイルのチェック状態を更新してください。
 
-最終更新: 2026-07-13
+最終更新: 2026-07-19(タスク3完了分を追記)
 
 ## 1. コアシステム(C++)
 
@@ -38,17 +38,32 @@
 | Designerレイアウト(Title/Description/OptionButton_0-2) | ✅ 完了 |
 | ボタン0〜2のテキスト表示ロジック(Sequence + Array Get + IsValidIndex) | ✅ 完了・PIEで表示確認済み |
 | タイトル・説明文のテキスト表示ロジック | ✅ 完了・PIEで表示確認済み |
-| 各ボタンの `OnClicked` → `SelectChoiceOption(CurrentChoice, Index)` | ❌ 未着手 |
-| 選択後にダイアログを閉じる(`Remove from Parent`) | ❌ 未着手 |
+| 各ボタンの `OnClicked` → `HandleOptionSelected` 経由で `SelectChoiceOption(CurrentChoice, Index)` | ✅ 完了・PIEでクリック動作確認済み |
+| 選択後にダイアログを閉じる(`Remove from Parent`) | ✅ 完了(`HandleOptionSelected` 内で同時に実装) |
 
 ### PlayerController 側の表示フック
 
 | 項目 | 状態 |
 |---|---|
 | `BP_ShowChoiceDialog`: Create Widget → Set CurrentChoice → Add to Viewport | ✅ 完了・PIEで表示確認済み |
-| `BP_OnPhaseChanged`: フェーズ切り替え演出 | ❌ 未着手 |
-| `BP_OnGameOver`: ゲームオーバー画面表示 | ❌ 未着手 |
-| `BP_OnGameClear`: ゲームクリア画面表示 | ❌ 未着手 |
+| `BP_OnPhaseChanged`: フェーズ切り替え演出(`WBP_PhaseBanner` をCreate Widget→Add to Viewport→2.5秒後Remove from Parent) | ✅ 完了 |
+| `BP_OnGameOver`: ゲームオーバー画面表示(`WBP_GameOver` にMessageを渡してAdd to Viewport) | ✅ 完了 |
+| `BP_OnGameClear`: ゲームクリア画面表示(`WBP_GameClear` をAdd to Viewport) | ✅ 完了 |
+
+### WBP_PhaseBanner(フェーズ切り替えバナー)
+
+| 項目 | 状態 |
+|---|---|
+| Designerレイアウト(Canvas Panel + PhaseNameText) | ✅ 完了 |
+| `PhaseName`(Text, Expose on Spawn)→Construct時に`PhaseNameText`へ反映 | ✅ 完了 |
+
+### WBP_GameOver / WBP_GameClear
+
+| 項目 | 状態 |
+|---|---|
+| Designerレイアウト(半透明背景+タイトル+メッセージ+ボタン) | ✅ 完了 |
+| `GameOverMessage`(Text, Expose on Spawn)→Construct時に反映(GameOverのみ) | ✅ 完了 |
+| リトライ/リスタートボタン → `Open Level (by Name)` = `MainLevel` | ✅ 完了 |
 
 ### その他のUI(未着手)
 
@@ -56,8 +71,6 @@
 |---|---|
 | HUD(資金・ステータス・残り日数表示) | ❌ 未着手 |
 | フェーズ目標(Objectives)の達成状況表示 | ❌ 未着手 |
-| ゲームオーバー画面 | ❌ 未着手 |
-| ゲームクリア画面 | ❌ 未着手 |
 
 ## 4. 入力(Enhanced Input)
 
@@ -77,11 +90,13 @@
 
 ## 6. 次にやること(優先順)
 
-1. **選択肢ボタンのクリック処理**: `OptionButton_0/1/2` の `OnClicked` → `SelectChoiceOption(CurrentChoice, Index)` 呼び出し
-2. **選択後の後処理**: `PhaseSubsystem::ApplyChoiceOption` の呼び出し経路の確認、ダイアログの `Remove from Parent`
-3. **フェーズ切り替え・ゲームオーバー/クリアのUI実装**(`BP_OnPhaseChanged` / `BP_OnGameOver` / `BP_OnGameClear`)
-4. **残り2フェーズ分のPhaseData/ChoiceDataアセット作成**(`GamePlot.md` の未確定事項と合わせて数値設計)
+1. ~~**選択肢ボタンのクリック処理**: `OptionButton_0/1/2` の `OnClicked` → `SelectChoiceOption(CurrentChoice, Index)` 呼び出し~~ → ✅ 完了(2026-07-19)
+2. ~~**選択後の後処理**: `PhaseSubsystem::ApplyChoiceOption` の呼び出し経路の確認、ダイアログの `Remove from Parent`~~ → ✅ 完了(2026-07-19。`ChoiceSubsystem::SelectOption` 内で `ApplyChoiceOption` 呼び出し済みと判明、ダイアログを閉じる処理も実装)
+3. ~~**フェーズ切り替え・ゲームオーバー/クリアのUI実装**(`BP_OnPhaseChanged` / `BP_OnGameOver` / `BP_OnGameClear`)~~ → ✅ 完了(2026-07-19。`WBP_PhaseBanner` / `WBP_GameOver` / `WBP_GameClear` を新規作成)
+4. **残り2フェーズ分のPhaseData/ChoiceDataアセット作成**(`GamePlot.md` の未確定事項と合わせて数値設計) ← 次はここから
 5. **HUD(資金・ステータス表示)の実装**
+
+> 補足: 作業中に `BP_FuctoryPlayerController` のClass Defaults(Enhanced Input参照)がプロジェクト再起動のたびに空になる事象が発生。原因はLive Codingでヘッダー変更を反映した際のCDO不整合。`Binaries`/`Intermediate` 削除→完全再コンパイルで解消。今後ヘッダー変更時はLive Codingを使わないこと。
 
 ---
 *進捗を更新したら、対応する実装ファイル・関連ドキュメント([`GamePlot.md`](./GamePlot.md))とも矛盾がないか確認してください。*

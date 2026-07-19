@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(Select-String -Path \"C:\\\\Users\\\\keisy\\\\AppData\\\\Roaming\\\\Unreal Engine\\\\AutomationTool\\\\Logs\\\\C+Program+Files+Epic+Games+UE_5.8\\\\Log.txt\" -Pattern \"error|warning|Error|Warning\" | Select-Object -First 60 | ForEach-Object { $_.Line })"
+      "PowerShell(Select-String -Path \"C:\\\\Users\\\\keisy\\\\AppData\\\\Roaming\\\\Unreal Engine\\\\AutomationTool\\\\Logs\\\\C+Program+Files+Epic+Games+UE_5.8\\\\Log.txt\" -Pattern \"error|warning|Error|Warning\" | Select-Object -First 60 | ForEach-Object { $_.Line })",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(grep -a -o -E \"[ -~]{4,}\" \"Content/UI/WBP_ChoiceDialog.uasset\")",
+      "Bash(grep -a -o -E \"[ -~]{4,}\" \"Content/Core/BP_FuctoryPlayerController.uasset\")",
+      "Bash(git push *)"
     ]
   }
 }
