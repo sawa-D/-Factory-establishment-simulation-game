@@ -10,7 +10,7 @@ class UChoiceData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChoicePresented, UChoiceData*, Choice);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnOptionSelected, UChoiceData*, Choice, int32, OptionIndex);
 
-UCLASS()
+UCLASS(BlueprintType)
 class FUCTORY_API UChoiceSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()

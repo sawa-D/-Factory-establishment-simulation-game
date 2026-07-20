@@ -6,7 +6,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMoneyChanged, float, NewAmount);
 
-UCLASS()
+UCLASS(BlueprintType)
 class FUCTORY_API UEconomySubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()

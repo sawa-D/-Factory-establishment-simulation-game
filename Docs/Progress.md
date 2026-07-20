@@ -4,7 +4,7 @@
 > 設計・仕様の詳細は [`GamePlot.md`](./GamePlot.md) を参照してください。
 > 作業を進めるたびに、このファイルのチェック状態を更新してください。
 
-最終更新: 2026-07-19(GamePlot.md確定に伴い更新)
+最終更新: 2026-07-20(WBP_HUD実装完了に伴い更新)
 
 ## 1. コアシステム(C++)
 
@@ -66,11 +66,20 @@
 | `GameOverMessage`(Text, Expose on Spawn)→Construct時に反映(GameOverのみ) | ✅ 完了 |
 | リトライ/リスタートボタン → `Open Level (by Name)` = `MainLevel` | ✅ 完了 |
 
+### WBP_HUD(常時表示HUD)
+
+| 項目 | 状態 |
+|---|---|
+| Designerレイアウト(Vertical Box + DaysText/MoneyText/PhaseStatsText) | ✅ 完了 |
+| `Get Phase Subsystem`(`PhaseSys`変数、Promote to Variable) | ✅ 完了 |
+| `Event Construct` → `Bind Event to OnStatsUpdated`(`RefreshHUD`)+初期表示用の手動呼び出し | ✅ 完了 |
+| `RefreshHUD`: 残り日数/DayLimit・資金・フェーズ別主要ステータス(`Switch on EGamePhase`)の表示更新 | ✅ 完了・PIEで表示確認済み |
+| `BP_FuctoryPlayerController`: `BP_OnPhaseChanged`先頭での`IsValid`分岐によるHUD初回生成(`Create Widget`→`Add to Viewport`) | ✅ 完了・PIEで動作確認済み |
+
 ### その他のUI(未着手)
 
 | 項目 | 状態 |
 |---|---|
-| HUD(資金・ステータス・残り日数表示) | ❌ 未着手 |
 | フェーズ目標(Objectives)の達成状況表示 | ❌ 未着手 |
 
 ## 4. 入力(Enhanced Input)
@@ -97,11 +106,12 @@
 4. ~~**GamePlot.mdの未確定事項を詰める**(数値基準・選択肢バリエーション・UI/UX方針・世界観・リプレイ性)~~ → ✅ 完了(2026-07-19。`GamePlot.md` 全面改訂)
 5. ~~**C++側の追加実装**~~ → ✅ 完了(2026-07-19。`SystemProgress`/`SystemProgressDelta`追加、`CheckHiddenConditions`のDayLimit判定ロジック改修、`GetOptionChangeSummary`ヘルパー追加。フルリコンパイルで動作確認済み)
 6. ~~**データアセットの作成・調整**~~ → ✅ 完了(2026-07-19。全フェーズのPhaseData/ChoiceData作成、`BP_FuctoryGameMode`への登録まで完了)
-7. **HUD(`WBP_HUD`)の実装**(残り日数・資金・主要ステータスのリアルタイム表示) ← 次はここから
-8. **選択後の結果確認パネルの実装**(`WBP_ChoiceDialog`改修。ResultText+変化項目の自動列挙→OKボタンで閉じる)
+7. ~~**HUD(`WBP_HUD`)の実装**~~ → ✅ 完了(2026-07-20。残り日数・資金・フェーズ別主要ステータスのリアルタイム表示、PIEで確認済み)
+8. **選択後の結果確認パネルの実装**(`WBP_ChoiceDialog`改修。ResultText+変化項目の自動列挙→OKボタンで閉じる) ← 次はここから
 9. **ランダム変動システムの実装**(`FRandomStream`によるプレイスルー単位の±10%変動)
 
 > 補足: 作業中に `BP_FuctoryPlayerController` のClass Defaults(Enhanced Input参照)がプロジェクト再起動のたびに空になる事象が発生。原因はLive Codingでヘッダー変更を反映した際のCDO不整合。`Binaries`/`Intermediate` 削除→完全再コンパイルで解消。今後ヘッダー変更時はLive Codingを使わないこと。
+> 補足2: `UGameInstanceSubsystem`派生クラス(`PhaseSubsystem`/`EconomySubsystem`/`ChoiceSubsystem`)は当初`UCLASS()`のみで`BlueprintType`指定が無く、Blueprint側の変数型検索・自動生成`Get Xxx Subsystem`ノードが出てこない問題があった。3クラスとも`UCLASS(BlueprintType)`に修正して解消(2026-07-20)。
 
 ---
 *進捗を更新したら、対応する実装ファイル・関連ドキュメント([`GamePlot.md`](./GamePlot.md))とも矛盾がないか確認してください。*

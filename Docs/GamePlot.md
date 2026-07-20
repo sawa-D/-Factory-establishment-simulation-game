@@ -178,7 +178,7 @@
 
 ## 10. 残タスク・保留事項
 
-- [ ] HUD(`WBP_HUD`)の実装(8章参照)
+- [x] HUD(`WBP_HUD`)の実装(8章参照、2026-07-20完了)
 - [ ] 選択後の結果確認パネルの実装(8章参照、`WBP_ChoiceDialog`改修+C++ヘルパー追加)
 - [ ] `SystemProgress` フィールドのC++追加
 - [ ] `PhaseSubsystem::CheckHiddenConditions` のDayLimit判定ロジック改修(3章参照)

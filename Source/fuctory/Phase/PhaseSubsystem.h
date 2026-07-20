@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnGameOver, EGameOverReason, Reaso
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameClear);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStatsUpdated, const FFactoryStats&, Stats);
 
-UCLASS()
+UCLASS(BlueprintType)
 class FUCTORY_API UPhaseSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
