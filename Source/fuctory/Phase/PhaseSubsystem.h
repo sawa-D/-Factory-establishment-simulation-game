@@ -40,6 +40,10 @@ public:
     UFUNCTION(BlueprintPure, Category = "Phase")
     void GetObjectiveStatus(TArray<FPhaseObjective>& OutObjectives, TArray<bool>& OutMet) const;
 
+    // Objectivesの達成状況を✓/✗付きの表示用テキストにまとめて返す(UI用)
+    UFUNCTION(BlueprintPure, Category = "Phase")
+    FText GetObjectivesSummaryText() const;
+
     UFUNCTION(BlueprintPure, Category = "Phase")
     EGamePhase GetCurrentPhase() const { return CurrentPhase; }
 

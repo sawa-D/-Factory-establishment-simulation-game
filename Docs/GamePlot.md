@@ -179,12 +179,15 @@
 ## 10. 残タスク・保留事項
 
 - [x] HUD(`WBP_HUD`)の実装(8章参照、2026-07-20完了)
-- [ ] 選択後の結果確認パネルの実装(8章参照、`WBP_ChoiceDialog`改修+C++ヘルパー追加)
-- [ ] `SystemProgress` フィールドのC++追加
-- [ ] `PhaseSubsystem::CheckHiddenConditions` のDayLimit判定ロジック改修(3章参照)
-- [ ] ランダム変動システムの実装(9章参照)
-- [ ] `DA_Phase_Setup` / `DA_Phase_MassProduction` および各選択肢のChoiceDataアセット作成(6章の数値を反映)
-- [ ] `DA_Choice_Contractor` の既存数値を6章の数値に合わせて調整
+- [x] 選択後の結果確認パネルの実装(8章参照、`WBP_ChoiceDialog`改修+C++ヘルパー追加、2026-07-26完了)
+- [x] `SystemProgress` フィールドのC++追加
+- [x] `PhaseSubsystem::CheckHiddenConditions` のDayLimit判定ロジック改修(3章参照)
+- [x] ランダム変動システムの実装(9章参照、`ChoiceSubsystem::GetVariedOption`、2026-07-26完了)
+- [x] `DA_Phase_Setup` / `DA_Phase_MassProduction` および各選択肢のChoiceDataアセット作成(6章の数値を反映)
+- [x] `DA_Choice_Contractor` の既存数値を6章の数値に合わせて調整
+- [ ] フェーズ目標(Objectives)の達成状況表示UI(未着手、`Progress.md`3章参照)
+- [ ] 本番用の入力方式の検討(マウスクリック中心のUIにするか等、`Progress.md`4章参照)
+- [ ] レベルアート・工場建屋の見た目(未着手/未確認、`Progress.md`5章参照)
 - [ ] 実際のプレイテストによる数値の微調整(6章の数値は初期案であり、バランス調整の余地がある)
 
 ---

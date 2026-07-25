@@ -4,7 +4,7 @@
 > 設計・仕様の詳細は [`GamePlot.md`](./GamePlot.md) を参照してください。
 > 作業を進めるたびに、このファイルのチェック状態を更新してください。
 
-最終更新: 2026-07-20(WBP_HUD実装完了に伴い更新)
+最終更新: 2026-07-26(ランダム変動システム実装完了に伴い更新)
 
 ## 1. コアシステム(C++)
 
@@ -40,7 +40,10 @@
 | ボタン0〜2のテキスト表示ロジック(Sequence + Array Get + IsValidIndex) | ✅ 完了・PIEで表示確認済み |
 | タイトル・説明文のテキスト表示ロジック | ✅ 完了・PIEで表示確認済み |
 | 各ボタンの `OnClicked` → `HandleOptionSelected` 経由で `SelectChoiceOption(CurrentChoice, Index)` | ✅ 完了・PIEでクリック動作確認済み |
-| 選択後にダイアログを閉じる(`Remove from Parent`) | ✅ 完了(`HandleOptionSelected` 内で同時に実装) |
+| 選択後の結果確認パネル(`ResultPanel`/`ResultText`/`ChangeSummaryText`/`Button_OK`、Designer側) | ✅ 完了 |
+| `HandleOptionSelected`: `Option.ResultText`→`ResultText`、`GetOptionChangeSummary(Option)`→`ChangeSummaryText`へ反映 | ✅ 完了・PIEで表示確認済み |
+| `HandleOptionSelected`: `MainBox`を`Collapsed`、`ResultPanel`を`Visible`に切り替え | ✅ 完了・PIEで動作確認済み |
+| `Button_OK`の`OnClicked` → `Remove from Parent`(ダイアログを閉じる) | ✅ 完了・PIEで動作確認済み |
 
 ### PlayerController 側の表示フック
 
@@ -107,11 +110,13 @@
 5. ~~**C++側の追加実装**~~ → ✅ 完了(2026-07-19。`SystemProgress`/`SystemProgressDelta`追加、`CheckHiddenConditions`のDayLimit判定ロジック改修、`GetOptionChangeSummary`ヘルパー追加。フルリコンパイルで動作確認済み)
 6. ~~**データアセットの作成・調整**~~ → ✅ 完了(2026-07-19。全フェーズのPhaseData/ChoiceData作成、`BP_FuctoryGameMode`への登録まで完了)
 7. ~~**HUD(`WBP_HUD`)の実装**~~ → ✅ 完了(2026-07-20。残り日数・資金・フェーズ別主要ステータスのリアルタイム表示、PIEで確認済み)
-8. **選択後の結果確認パネルの実装**(`WBP_ChoiceDialog`改修。ResultText+変化項目の自動列挙→OKボタンで閉じる) ← 次はここから
-9. **ランダム変動システムの実装**(`FRandomStream`によるプレイスルー単位の±10%変動)
+8. ~~**選択後の結果確認パネルの実装**~~ → ✅ 完了(2026-07-26。`WBP_ChoiceDialog`にResultPanel追加、`HandleOptionSelected`改修でResultText/ChangeSummaryTextへ反映後、Button_OKで閉じる形に変更。PIEで一連の流れを確認済み)
+9. ~~**ランダム変動システムの実装**~~ → ✅ 完了(2026-07-26。`ChoiceSubsystem`に`GetVariedOption`/`ResetForNewPlaythrough`追加、`FuctoryGameMode::InitializeGame`でシード再抽選。`WBP_ChoiceDialog`側もArray Getから`Get Varied Option`呼び出しに差し替え。PIEで動作確認済み)
 
 > 補足: 作業中に `BP_FuctoryPlayerController` のClass Defaults(Enhanced Input参照)がプロジェクト再起動のたびに空になる事象が発生。原因はLive Codingでヘッダー変更を反映した際のCDO不整合。`Binaries`/`Intermediate` 削除→完全再コンパイルで解消。今後ヘッダー変更時はLive Codingを使わないこと。
 > 補足2: `UGameInstanceSubsystem`派生クラス(`PhaseSubsystem`/`EconomySubsystem`/`ChoiceSubsystem`)は当初`UCLASS()`のみで`BlueprintType`指定が無く、Blueprint側の変数型検索・自動生成`Get Xxx Subsystem`ノードが出てこない問題があった。3クラスとも`UCLASS(BlueprintType)`に修正して解消(2026-07-20)。
+> 補足3: タスク8「選択後の結果確認パネル」完了(2026-07-26)。`HandleOptionSelected`の最終形: `SelectChoiceOption`呼び出し→`Get Choice Subsystem`→`Get Varied Option(CurrentChoice, OptionIndex)`で`Option`取得(タスク9対応後)→`Option.ResultText`を`ResultText`へSet Text→`GetOptionChangeSummary(Option)`を`ChangeSummaryText`へSet Text→`MainBox`を`Collapsed`/`ResultPanel`を`Visible`に切り替え。ダイアログを閉じるのは`Button_OK`の`OnClicked`→`Remove from Parent`に変更(選択直後には閉じない)。
+> 補足4: タスク9「ランダム変動システム」完了(2026-07-26)。`ChoiceSubsystem::GetVariedOption(Choice, OptionIndex)`が、ChoiceData名+OptionIndex+`PlaythroughSeed`から`FRandomStream`で決定的に1つの変動率(0.9〜1.1倍)を算出し、MoneyCost/DaysUsed/各Deltaへ一律適用して返す(データアセット自体は変更しない)。`SelectOption`はこの変動後の値でステータス適用まで行うため、表示(結果パネル)と実際の適用値が一致する。`PlaythroughSeed`は`FuctoryGameMode::InitializeGame()`(プレイスルー開始点、Retryでも再実行される)で`ChoiceSys->ResetForNewPlaythrough()`により再抽選。ヘッダー変更を伴うため、Live Codingは使わずフルリビルドで対応(このタイミングで`Intermediate/ProjectFiles`欠落・Smart App Controlによるモジュールブロックの2つの環境問題が別途発生し、解消済み)。
 
 ---
 *進捗を更新したら、対応する実装ファイル・関連ドキュメント([`GamePlot.md`](./GamePlot.md))とも矛盾がないか確認してください。*

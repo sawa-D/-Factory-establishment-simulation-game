@@ -41,6 +41,15 @@ public:
     UFUNCTION(BlueprintPure, Category = "Choice")
     static FText GetOptionChangeSummary(const FChoiceOption& Option);
 
+    // 選択肢の数値(MoneyCost/DaysUsed/各Delta)に、プレイスルー単位のランダム変動(±10%)を適用した結果を返す。
+    // 表示(結果パネル)と適用(ステータス反映)の両方でこの関数を経由することで数値を一致させる。
+    UFUNCTION(BlueprintPure, Category = "Choice")
+    FChoiceOption GetVariedOption(UChoiceData* Choice, int32 OptionIndex) const;
+
+    // 新しいプレイスルー開始時に呼ぶ(ランダム変動のシードを再抽選)
+    UFUNCTION(BlueprintCallable, Category = "Choice")
+    void ResetForNewPlaythrough();
+
     // フェーズ切り替え時に完了履歴をリセット
     UFUNCTION(BlueprintCallable, Category = "Choice")
     void ResetForPhase();
@@ -53,4 +62,5 @@ public:
 
 private:
     TSet<FName> CompletedChoiceNames;
+    int32 PlaythroughSeed = 0;
 };

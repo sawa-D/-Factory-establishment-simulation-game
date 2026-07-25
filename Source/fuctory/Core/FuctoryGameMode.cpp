@@ -1,6 +1,7 @@
 #include "FuctoryGameMode.h"
 #include "Phase/PhaseSubsystem.h"
 #include "Phase/PhaseData.h"
+#include "Choice/ChoiceSubsystem.h"
 #include "Player/FuctoryPlayerController.h"
 #include "Player/IsometricPawn.h"
 
@@ -25,6 +26,11 @@ void AFuctoryGameMode::InitializeGame()
     for (UPhaseData* PD : PhaseDataAssets)
     {
         if (PD) DataArray.Add(PD);
+    }
+
+    if (UChoiceSubsystem* ChoiceSys = GI->GetSubsystem<UChoiceSubsystem>())
+    {
+        ChoiceSys->ResetForNewPlaythrough();
     }
 
     if (UPhaseSubsystem* PhaseSys = GI->GetSubsystem<UPhaseSubsystem>())

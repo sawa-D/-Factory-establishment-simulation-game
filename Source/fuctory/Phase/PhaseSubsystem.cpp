@@ -194,6 +194,21 @@ void UPhaseSubsystem::GetObjectiveStatus(TArray<FPhaseObjective>& OutObjectives,
     }
 }
 
+FText UPhaseSubsystem::GetObjectivesSummaryText() const
+{
+    TArray<FPhaseObjective> Objectives;
+    TArray<bool> Met;
+    GetObjectiveStatus(Objectives, Met);
+
+    TArray<FString> Lines;
+    for (int32 i = 0; i < Objectives.Num(); ++i)
+    {
+        Lines.Add(FString::Printf(TEXT("%s %s"), Met[i] ? TEXT("✓") : TEXT("✗"), *Objectives[i].ObjectiveText.ToString()));
+    }
+
+    return FText::FromString(FString::Join(Lines, TEXT("\n")));
+}
+
 UPhaseData* UPhaseSubsystem::GetCurrentPhaseData() const
 {
     if (AllPhaseData.IsValidIndex(CurrentPhaseIndex))
